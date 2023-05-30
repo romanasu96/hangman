@@ -1,12 +1,33 @@
 const words = ["JAVASCRIPT", "CASA", "BALENA", "CALCULATOR", "CANAPEA", "STICLA", "ANIMAL", "MASINA", "BALCON", "JUCARIE"];
 const maxLives = 7;
 let lives = maxLives;
-let word = words[Math.floor(Math.random() * words.length)];
+let word = getRandomWord(words);
 let answerArray = [];
 let lettersGuessed = [];
 
-for (let i = 0; i < word.length; i++) {
-    answerArray[i] = "_";
+initializeGame();
+
+function getRandomWord(wordList) {
+    return wordList[Math.floor(Math.random() * wordList.length)];
+}
+
+function initializeGame() {
+    initializeAnswerArray();
+    displayGameState();
+    document.getElementById("reload-button").addEventListener("click", function() {
+        location.reload();
+    });
+}
+
+function initializeAnswerArray() {
+    for (let i = 0; i < word.length; i++) {
+        answerArray[i] = "_";
+    }
+}
+
+function displayGameState() {
+    document.getElementById("word").innerHTML = answerArray.join(" ");
+    document.getElementById("lives").innerHTML = `Lives: ${lives}`;
 }
 
 function displayMessage(message, duration) {
@@ -17,14 +38,7 @@ function displayMessage(message, duration) {
     }, duration);
 }
 
-document.getElementById("word").innerHTML = answerArray.join(" ");
-document.getElementById("lives").innerHTML = `Lives: ${lives}`;
-document.getElementById("reload-button").addEventListener("click", function() {
-    location.reload();
-});
-
-document.addEventListener("submit", function(event) {
-    event.preventDefault();
+function handleGuess() {
     let guess = document.getElementById("guess").value.toUpperCase();
     document.getElementById("guess").value = "";
     if (guess.length !== 1 || !/^[A-Z]$/.test(guess)) {
@@ -38,6 +52,10 @@ document.addEventListener("submit", function(event) {
     lettersGuessed.push(guess);
     document.getElementById("letters").innerHTML = `Guessed letters: ${lettersGuessed.join(" ")}`;
 
+    checkGuess(guess);
+}
+
+function checkGuess(guess) {
     let correctGuess = false;
     for (let i = 0; i < word.length; i++) {
         if (word[i] === guess) {
@@ -59,4 +77,4 @@ document.addEventListener("submit", function(event) {
             document.getElementById("guess").disabled = true;
         }
     }
-});
+}
